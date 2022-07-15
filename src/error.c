@@ -1,33 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/07/14 04:39:11 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/14 21:03:46 by frosa-ma         ###   ########.fr       */
+/*   Created: 2022/07/15 05:08:13 by frosa-ma          #+#    #+#             */
+/*   Updated: 2022/07/15 05:17:57 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#include "pipex.h"
 
-typedef struct	s_cmd
+void	error(char *err, int ecode, t_env *env)
 {
-	char	**args;
-	char	*path;
-}				t_cmd;
-
-typedef struct	s_env
-{
-	t_cmd	cmd;
-	char	**envp;
-	char	**av;
-	char	*infile;
-	char	*outfile;
-	int		pfd[2];
-	int		pid[2];
-}				t_env;
-
-#endif
+	if (ecode > 3)
+	{
+		ft_free_matrix(env->envp);
+		free(env->envp);
+		ft_free_matrix(env->cmd.args);
+		free(env->cmd.args);
+		free(env->cmd.path);
+	}
+	perror(err);
+	strerror(ecode);
+	exit(ecode);
+}
