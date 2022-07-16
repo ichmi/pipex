@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/11 17:01:57 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/15 05:59:25 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/15 19:58:24 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static void	init_data(t_env *env, char **av, char **ep)
 		error("[-] infile", 3, env);
 	env->infile = av[1];
 	env->outfile = av[4];
+	env->pid_flag = 1;
 	env->envp = get_environ(ep);
 	env->av = av;
 }
@@ -38,9 +39,9 @@ int	main(int ac, char **av, char **ep)
 	t_env	env;
 
 	if (ac != 5)
-		error("[-] argv", 1, NULL);
+		error("[-] argv: Invalid number of arguments\n", 1, NULL);
 	if (pipe(env.pfd) == -1)
-		error("[-] pipe", 2, NULL);
+		error("[-] pipe error", 2, NULL);
 	init_data(&env, av, ep);
 	if (pipeline(&env, 0, init_rd) != 0)
 		error("[-] 1: exec", 9, &env);
@@ -49,7 +50,8 @@ int	main(int ac, char **av, char **ep)
 	close(env.pfd[0]);
 	close(env.pfd[1]);
 	waitpid(env.pid[0], NULL, 0);
-	waitpid(env.pid[1], NULL, 0);
+	if (env.pid_flag)
+		waitpid(env.pid[1], NULL, 0);
 	ft_free_matrix(env.envp);
 	return (0);
 }

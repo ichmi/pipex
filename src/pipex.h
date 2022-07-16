@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 04:39:11 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/15 05:55:57 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/16 03:07:02 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,15 @@ typedef struct s_env
 	char	*outfile;
 	int		pfd[2];
 	int		pid[2];
+	int		pid_flag;
 }		t_env;
 
 int		pipeline(t_env *env, int n, int (*fn)(t_env *));
 int		init_rd(t_env *env);
 int		init_wr(t_env *env);
-void	arg_parsing(char *exe, t_env *env);
+void	arg_parser(t_env *env);
+void	_awk_parser(char *exe, t_env *env);
 void	error(char *err, int ecode, t_env *env);
+int		wrb_outfile(t_env *env);
 
 #endif
