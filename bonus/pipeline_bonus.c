@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/15 05:17:03 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/19 02:41:28 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/19 03:32:11 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	file_to_pipe(int i, t_env *env)
 	{
 		close(pfd[i][0]);
 		fd = open(env->infile, O_RDONLY);
+		if (fd == -1)
+			error(NULL, 5, env);
 		dup2(fd, STDIN_FILENO);
 		dup2(pfd[i][1], STDOUT_FILENO);
 		exec(i, env);
