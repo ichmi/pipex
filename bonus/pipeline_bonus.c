@@ -5,98 +5,97 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/07/15 05:04:18 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/18 22:17:15 by frosa-ma         ###   ########.fr       */
+/*   Created: 2022/07/15 05:17:03 by frosa-ma          #+#    #+#             */
+/*   Updated: 2022/07/19 02:41:28 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-static char	*get_filepath(t_env *env, char *cmd_name)
+void	file_to_pipe(int i, t_env *env)
 {
-	char	**environ;
-	char	*filepath;
-	int		i;
+	pid_t	**pfd;
+	int		wstatus;
+	int		pid;
+	int		fd;
 
-	i = -1;
-	environ = env->envp;
-	filepath = NULL;
-	while (environ[++i])
+	pfd = env->pfd;
+	if (pipe(pfd[i]) == -1)
+		error(PIPE, 3, env);
+	pid = fork();
+	if (pid == -1)
+		error(FORK, 4, env);
+	if (pid == 0)
 	{
-		if (filepath)
-			free(filepath);
-		filepath = ft_strjoin(environ[i], "/");
-		filepath = ft_strjoins(filepath, cmd_name);
-		if (!access(filepath, F_OK))
-			return (filepath);
+		close(pfd[i][0]);
+		fd = open(env->infile, O_RDONLY);
+		dup2(fd, STDIN_FILENO);
+		dup2(pfd[i][1], STDOUT_FILENO);
+		exec(i, env);
 	}
-	free(filepath);
-	return (ft_strdup(""));
+	wait(&wstatus);
+	if (WIFEXITED(wstatus))
+		env->exit_status = WEXITSTATUS(wstatus);
+	close(pfd[i][1]);
 }
 
-// static void	validate_cmd(char *exe, t_env *env)
-// {
-// 	if (!access(exe, F_OK))
-// 		env->cmd.path = exe;
-// 	else
-// 		env->cmd.path = get_filepath(env, exe);
-// }
-
-static void	init_program_args(int n, char **exe, t_env *env)
+static void	_pipe_to_pipe(int i, t_env *env)
 {
-	char	*args;
+	pid_t	**pfd;
+	int		wstatus;
+	int		pid;
 
-	args = env->av[n + 2];
-	if (n == 0 && !*args)
+	pfd = env->pfd;
+	if (pipe(pfd[i]) == -1)
+		error(PIPE, 3, env);
+	pid = fork();
+	if (pid == -1)
+		error(FORK, 4, env);
+	if (!pid)
 	{
-		if (env->envp)
-			ft_free_matrix(env->envp);
-		clear_pipes(env);
-		exit(0);
+		close(pfd[i][0]);
+		dup2(pfd[i - 1][0], STDIN_FILENO);
+		dup2(pfd[i][1], STDOUT_FILENO);
+		exec(i, env);
 	}
-	env->cmd.args = ft_split(args, ' ');
-	if (n && !*env->cmd.args)
+	wait(&wstatus);
+	if (WIFEXITED(wstatus))
+		env->exit_status = WEXITSTATUS(wstatus);
+	close(pfd[i - 1][0]);
+	close(pfd[i][1]);
+}
+
+void	pipe_to_pipe(int *i, t_env *env)
+{
+	if (env->size > 2)
 	{
-		ft_free_matrix(env->cmd.args);
-		ft_free_matrix(env->envp);
-		clear_pipes(env);
-		exit(0);
+		while (++(*i) < env->size - 1)
+			_pipe_to_pipe(*i, env);
 	}
 	else
-		*exe = ft_strdup(env->cmd.args[0]);
+		(*i)++;
 }
 
-int	is_awk(char *exe, t_env *env)
+void	pipe_to_file(int i, t_env *env)
 {
-	char	**cmd;
+	pid_t	**pfd;
+	int		wstatus;
+	int		pid;
+	int		fd;
 
-	cmd = env->cmd.args;
-	if (cmd[0] && ft_strncmp(cmd[0], "awk", 4) == 0)
-		if (cmd[1] && (*cmd[1] == '\'' || *cmd[1] == '"'))
-			return (_awk_parser(exe, env));
-	return (0);
-}
-
-void	exec(int n, t_env *env)
-{
-	char	**cmd;
-
-	init_program_args(n, &env->exe, env);
-	cmd = env->cmd.args;
-	if (is_awk(env->exe, env))
-		ft_free_matrix(cmd);
-	else if (cmd[1] && (ft_strchr(cmd[1], '\'') || ft_strchr(cmd[1], '"')))
-		arg_parser(env);
-	if (!access(env->exe, F_OK))
-		env->cmd.path = env->exe;
-	else
-		env->cmd.path = get_filepath(env, env->exe);
-	if (execve(env->cmd.path, env->cmd.args, env->envp) == -1)
+	pfd = env->pfd;
+	pid = fork();
+	if (pid == -1)
+		error(FORK, 4, env);
+	if (!pid)
 	{
-		ft_free_matrix(env->cmd.args);
-		ft_free_matrix(env->envp);
-		free(env->cmd.path);
-		clear_pipes(env);
-		cmd_not_found(env);
+		fd = open(env->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		dup2(pfd[i - 1][0], STDIN_FILENO);
+		dup2(fd, STDOUT_FILENO);
+		exec(i, env);
 	}
+	wait(&wstatus);
+	if (WIFEXITED(wstatus))
+		env->exit_status = WEXITSTATUS(wstatus);
+	close(pfd[i - 1][0]);
 }

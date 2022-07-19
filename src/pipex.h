@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 04:39:11 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/18 22:00:28 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/19 02:44:41 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 # include "../libft/libft.h"
+# include "utils.h"
+
+# define HOWTO EXE INF CMD OUF
+# define BASH ERR RED "bash" ENDERR
+# define FORK ERR RED "fork" ENDERR
+# define PIPE ERR RED "pipe" ENDERR
 
 typedef struct s_cmd
 {
@@ -30,21 +36,23 @@ typedef struct s_cmd
 typedef struct s_env
 {
 	t_cmd	cmd;
+	int		exit_status;
 	char	**envp;
 	char	**av;
+	int		**pfd;
 	char	*infile;
 	char	*outfile;
-	int		pfd[2];
-	int		pid[2];
-	int		pid_flag;
+	int		size;
+	char	*exe;
 }		t_env;
 
-int		pipeline(t_env *env, int n, int (*fn)(t_env *));
-int		init_rd(t_env *env);
-int		init_wr(t_env *env);
+void	file_to_pipe(int i, t_env *env);
+void	pipe_to_file(int i, t_env *env);
+void	exec(int n, t_env *env);
 void	arg_parser(t_env *env);
-void	_awk_parser(char *exe, t_env *env);
+int		_awk_parser(char *exe, t_env *env);
 void	error(char *err, int ecode, t_env *env);
-int		wrb_outfile(t_env *env);
+void	cmd_not_found(t_env *env);
+void	clear_pipes(t_env *env);
 
 #endif

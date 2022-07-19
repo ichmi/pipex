@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/11 17:01:57 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/18 22:48:17 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/19 02:39:49 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void	init_env(int ac, char **av, char **ep, t_env *env)
 {
 	env->infile = av[1];
 	if (access(av[1], F_OK) == -1)
-		error(NULL, 1, env);
+		error(NULL, 2, env);
 	env->av = av;
 	env->size = ac - 3;
 	env->outfile = av[ac - 1];
@@ -54,7 +54,7 @@ int	main(int ac, char **av, char **ep)
 	int		i;
 
 	if (ac < 5)
-		error("[-] bash: Invalid number of arguments\n", 1, NULL);
+		error(BASH, 1, NULL);
 	init_env(ac, av, ep, &env);
 	init_pipeline(&env);
 	i = 0;

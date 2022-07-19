@@ -5,103 +5,60 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/07/15 05:04:18 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/16 03:55:42 by frosa-ma         ###   ########.fr       */
+/*   Created: 2022/07/15 05:17:03 by frosa-ma          #+#    #+#             */
+/*   Updated: 2022/07/19 02:50:06 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static char	*get_filepath(t_env *env, char *cmd_name)
+void	file_to_pipe(int i, t_env *env)
 {
-	char	**environ;
-	char	*filepath;
-	int		i;
+	pid_t	**pfd;
+	int		wstatus;
+	int		pid;
+	int		fd;
 
-	i = -1;
-	environ = env->envp;
-	filepath = NULL;
-	while (environ[++i])
+	pfd = env->pfd;
+	if (pipe(pfd[i]) == -1)
+		error(PIPE, 3, env);
+	pid = fork();
+	if (pid == -1)
+		error(FORK, 4, env);
+	if (pid == 0)
 	{
-		if (filepath)
-			free(filepath);
-		filepath = ft_strjoin(environ[i], "/");
-		filepath = ft_strjoins(filepath, cmd_name);
-		if (!access(filepath, F_OK))
-			return (filepath);
+		close(pfd[i][0]);
+		fd = open(env->infile, O_RDONLY);
+		dup2(fd, STDIN_FILENO);
+		dup2(pfd[i][1], STDOUT_FILENO);
+		exec(i, env);
 	}
-	if (filepath)
+	wait(&wstatus);
+	if (WIFEXITED(wstatus))
+		env->exit_status = WEXITSTATUS(wstatus);
+	close(pfd[i][1]);
+}
+
+void	pipe_to_file(int i, t_env *env)
+{
+	pid_t	**pfd;
+	int		wstatus;
+	int		pid;
+	int		fd;
+
+	pfd = env->pfd;
+	pid = fork();
+	if (pid == -1)
+		error(FORK, 4, env);
+	if (!pid)
 	{
-		free(filepath);
-		free(cmd_name);
-		ft_free_matrix(env->cmd.args);
-		ft_free_matrix(env->envp);
-		error("[-] program", 4, env);
+		fd = open(env->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		dup2(pfd[i - 1][0], STDIN_FILENO);
+		dup2(fd, STDOUT_FILENO);
+		exec(i, env);
 	}
-	return (NULL);
-}
-
-static void	validate_cmd(char *exe, t_env *env)
-{
-	if (!access(exe, F_OK))
-		env->cmd.path = exe;
-	else
-		env->cmd.path = get_filepath(env, exe);
-	if (env->cmd.path == NULL)
-		error("[-] program", 4, env);
-}
-
-static void	tokenize_cmd(int n, char **exe, t_env *env)
-{
-	char	*args;
-
-	args = env->av[n + 2];
-	if (!n && !*args)
-		error("[-] cmd: Command not found\n", 11, env);
-	env->cmd.args = ft_split(args, ' ');
-	if (n && !*env->cmd.args)
-		*exe = NULL;
-	else
-		*exe = ft_strdup(env->cmd.args[0]);
-}
-
-int	is_awk(char *exe, t_env *env)
-{
-	char	**cmd;
-
-	cmd = env->cmd.args;
-	if (cmd[0] && ft_strncmp(cmd[0], "awk", 4) == 0)
-	{
-		if (cmd[1] && (*cmd[1] == '\'' || *cmd[1] == '"'))
-		{
-			_awk_parser(exe, env);
-			return (1);
-		}
-	}
-	return (0);
-}
-
-int	pipeline(t_env *env, int n, int (*fn)(t_env *))
-{
-	char	**cmd;
-	char	*exe;
-
-	tokenize_cmd(n, &exe, env);
-	if (!exe)
-		return (wrb_outfile(env));
-	cmd = env->cmd.args;
-	if (is_awk(exe, env))
-		ft_free_matrix(cmd);
-	else if (cmd[1] && (ft_strchr(cmd[1], '\'') || ft_strchr(cmd[1], '"')))
-		arg_parser(env);
-	validate_cmd(exe, env);
-	env->pid[n] = fork();
-	if (env->pid[n] == -1)
-		error("[-] fork", 5, env);
-	if (!env->pid[n])
-		return (fn(env));
-	ft_free_matrix(env->cmd.args);
-	free(env->cmd.path);
-	free(exe);
-	return (0);
+	wait(&wstatus);
+	if (WIFEXITED(wstatus))
+		env->exit_status = WEXITSTATUS(wstatus);
+	close(pfd[i - 1][0]);
 }

@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/15 05:11:46 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/16 03:33:41 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/19 01:07:03 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static char	*trim_awk_args(t_env *env)
 	return (str);
 }
 
-void	_awk_parser(char *exe, t_env *env)
+int	_awk_parser(char *exe, t_env *env)
 {
 	char	**parsed_arg;
 
@@ -63,4 +63,5 @@ void	_awk_parser(char *exe, t_env *env)
 	parsed_arg[0] = ft_strdup(exe);
 	parsed_arg[1] = trim_awk_args(env);
 	env->cmd.args = parsed_arg;
+	return (1);
 }

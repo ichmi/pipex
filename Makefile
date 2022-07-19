@@ -6,7 +6,7 @@
 #    By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/14 20:58:11 by frosa-ma          #+#    #+#              #
-#    Updated: 2022/07/19 00:02:10 by frosa-ma         ###   ########.fr        #
+#    Updated: 2022/07/19 01:26:34 by frosa-ma         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,8 @@ CC		= clang
 CFLAGS	= -Wall -Wextra -Werror
 FT		= libft.a
 
-SRCS	= main.c pipeline.c parser.c redirect.c error.c
-B_SRCS	= main_bonus.c pipeline_bonus.c parser_bonus.c redirect_bonus.c error_bonus.c
+SRCS	= main.c pipeline.c parser.c exec.c error.c
+B_SRCS	= main_bonus.c pipeline_bonus.c parser_bonus.c exec_bonus.c error_bonus.c
 OBJSDIR	= obj
 OBJS	= $(addprefix ${OBJSDIR}/, ${SRCS:%.c=%.o})
 B_OBJS	= $(addprefix ${OBJSDIR}/, ${B_SRCS:%.c=%.o})

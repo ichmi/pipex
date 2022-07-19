@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/15 05:08:13 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/18 22:51:57 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/19 02:43:23 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,10 @@ void	cmd_not_found(t_env *env)
 	char	*buff;
 
 	buff = NULL;
-	buff = ft_strjoin("Command '", env->exe);
-	buff = ft_strjoins(buff, "' not found\n");
-	write(2, buff, ft_strlen(buff) + 1);
+	buff = ft_strjoin("Command '" BLUE, env->exe);
+	buff = ft_strjoins(buff, RES "' not found");
+	ft_putstr_fd(BASH, 2);
+	ft_putendl_fd(buff, 2);
 	free(buff);
 	free(env->exe);
 	exit(127);
@@ -43,9 +44,16 @@ void	error(char *err, int ecode, t_env *env)
 	i = -1;
 	if (ecode == 1)
 	{
+		ft_putstr_fd(err, 2);
+		ft_putstr_fd("Use it as follow: ", 2);
+		ft_putendl_fd(HOWTO, 2);
+		exit(ecode);
+	}
+	if (ecode == 2)
+	{
 		buff = NULL;
-		ft_putstr_fd("[-] bash: ", 2);
-		buff = ft_strjoin(env->infile, ": No such file or directory");
+		ft_putstr_fd(BASH BLUE, 2);
+		buff = ft_strjoin(env->infile, RES ": No such file or directory");
 		ft_putendl_fd(buff, 2);
 		free(buff);
 		exit(ecode);
