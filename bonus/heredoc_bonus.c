@@ -1,29 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_bonus.h                                      :+:      :+:    :+:   */
+/*   heredoc_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/07/19 02:34:28 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/20 20:44:15 by frosa-ma         ###   ########.fr       */
+/*   Created: 2022/07/20 20:45:03 by frosa-ma          #+#    #+#             */
+/*   Updated: 2022/07/20 20:47:13 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_BONUS_H
-# define UTILS_BONUS_H
+#include "pipex_bonus.h"
 
-# define RED "\x1b[38;5;88m"
-# define BLUE "\x1b[38;5;45m"
-# define GREEN "\x1b[38;5;40m"
-# define YELLOW "\x1b[38;5;220m"
-# define RES "\x1b[0m"
+void	wr_hdoc_in(t_env *env)
+{
+	char	*delimeter;
+	char	*s;
+	int		fd;
 
-# define ERR "\x1b[38;5;196m[-] "
-# define ENDERR ":\x1b[0m "
-# define EXE "./pipex "
-# define INF "infile "
-# define CMD "\"cmd1\" \"cmd2\" ... \"cmdn\" "
-# define OUF "outfile"
-
-#endif
+	delimeter = env->delimeter;
+	fd = open(env->infile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	while (1)
+	{
+		s = _gnl(STDOUT_FILENO);
+		if (ft_strncmp(s, delimeter, ft_strlen(delimeter)) == 0)
+			break ;
+		ft_putstr_fd(s, fd);
+		free(s);
+	}
+	_gnl(SENTINEL);
+	close(fd);
+	free(s);
+}

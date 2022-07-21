@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/11 17:01:57 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/19 02:45:09 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/20 21:07:19 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	main(int ac, char **av, char **ep)
 	int		i;
 
 	if (ac != 5)
-		error(BASH, 1, NULL);
+		error(ERR RED "bash" ENDERR, 1, NULL);
 	init_env(ac, av, ep, &env);
 	init_pipeline(&env);
 	file_to_pipe(0, &env);

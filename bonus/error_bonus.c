@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/15 05:08:13 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/19 03:34:45 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/20 21:03:35 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	cmd_not_found(t_env *env)
 	buff = NULL;
 	buff = ft_strjoin("Command '" BLUE, env->exe);
 	buff = ft_strjoins(buff, RES "' not found");
-	ft_putstr_fd(BASH, 2);
+	ft_putstr_fd(ERR RED "bash" ENDERR, 2);
 	ft_putendl_fd(buff, 2);
 	free(buff);
 	free(env->exe);
@@ -41,7 +41,7 @@ static void	invalid_file(int ecode, t_env *env)
 	char	*buff;
 
 	buff = NULL;
-	ft_putstr_fd(BASH BLUE, 2);
+	ft_putstr_fd(ERR RED "bash" RES ": " BLUE, 2);
 	buff = ft_strjoin(env->infile, RES ": No such file or directory");
 	ft_putendl_fd(buff, 2);
 	free(buff);
@@ -51,8 +51,9 @@ static void	invalid_file(int ecode, t_env *env)
 static void	perm_denied(int ecode, t_env *env)
 {
 	char	*buff;
+
 	buff = NULL;
-	ft_putstr_fd(BASH BLUE, 2);
+	ft_putstr_fd(ERR RED "bash" RES ": " BLUE, 2);
 	buff = ft_strjoin(env->infile, RES ": Permission denied");
 	ft_putendl_fd(buff, 2);
 	free(buff);
@@ -67,7 +68,7 @@ void	error(char *err, int ecode, t_env *env)
 	{
 		ft_putstr_fd(err, 2);
 		ft_putstr_fd("Use it as follow: ", 2);
-		ft_putendl_fd(HOWTO, 2);
+		ft_putendl_fd(GREEN EXE YELLOW INF BLUE CMD YELLOW OUF RES, 2);
 		exit(ecode);
 	}
 	if (ecode == 2)

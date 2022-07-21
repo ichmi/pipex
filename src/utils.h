@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/19 02:34:28 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/19 02:45:21 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/20 21:10:32 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 
 # define ERR "\x1b[38;5;196m[-] "
 # define ENDERR ":\x1b[0m "
-# define EXE GREEN "./pipex "
-# define INF YELLOW "infile "
-# define CMD BLUE "\"cmd1\" \"cmd2\" "
-# define OUF YELLOW "outfile" RES
+# define EXE "./pipex "
+# define INF "infile "
+# define CMD "\"cmd1\" \"cmd2\" "
+# define OUF "outfile"
 
 #endif

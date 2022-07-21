@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/15 05:17:03 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/19 03:24:17 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/20 21:08:03 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ void	file_to_pipe(int i, t_env *env)
 
 	pfd = env->pfd;
 	if (pipe(pfd[i]) == -1)
-		error(PIPE, 3, env);
+		error(ERR RED "pipe" ENDERR, 3, env);
 	pid = fork();
 	if (pid == -1)
-		error(FORK, 4, env);
+		error(ERR RED "fork" ENDERR, 4, env);
 	if (pid == 0)
 	{
 		close(pfd[i][0]);
@@ -51,7 +51,7 @@ void	pipe_to_file(int i, t_env *env)
 	pfd = env->pfd;
 	pid = fork();
 	if (pid == -1)
-		error(FORK, 4, env);
+		error(ERR RED "fork" ENDERR, 4, env);
 	if (!pid)
 	{
 		fd = open(env->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);

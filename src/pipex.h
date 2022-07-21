@@ -6,7 +6,7 @@
 /*   By: frosa-ma <frosa-ma@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 04:39:11 by frosa-ma          #+#    #+#             */
-/*   Updated: 2022/07/19 02:44:41 by frosa-ma         ###   ########.fr       */
+/*   Updated: 2022/07/20 21:06:37 by frosa-ma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,6 @@
 # include <sys/wait.h>
 # include "../libft/libft.h"
 # include "utils.h"
-
-# define HOWTO EXE INF CMD OUF
-# define BASH ERR RED "bash" ENDERR
-# define FORK ERR RED "fork" ENDERR
-# define PIPE ERR RED "pipe" ENDERR
 
 typedef struct s_cmd
 {
